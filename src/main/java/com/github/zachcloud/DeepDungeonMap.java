@@ -8,8 +8,10 @@ public class DeepDungeonMap {
 
     private DeepDungeonMapNode origin;
 
-    private static final String ORIGIN_SPACE = "U";
-    private static final String DESTINATION_SPACE = "D";
+    private static final char ORIGIN_SPACE = 'U';
+    private static final char DESTINATION_SPACE = 'D';
+    private static final char EMPTY_SPACE = ' ';
+    private static final char WALL_SPACE = '*';
 
     private static final int HEIGHT = 21;
     private static final int WIDTH = 21;
@@ -59,13 +61,48 @@ public class DeepDungeonMap {
 
     private DeepDungeonMapNode deserialize(String data) {
         String[] lines = data.split("\n");
+        checkMapIntegrity(lines);
+
+        // Holds the starting locations (the 'U' character)
+        int startX = -1;
+        int startY = -1;
+
+        boolean foundOrigin = false;
+        boolean foundExit = false;
+
+        // Populate an array holding the characters from the map
+        // for easy lookup later.
+        char[][] indices = new char[HEIGHT][WIDTH];
+        for(int y = 0; y < HEIGHT; y++) {
+            for(int x = 0; x < WIDTH; x++) {
+                indices[y][x] = lines[y].charAt(x);
+                if(indices[y][x] == ORIGIN_SPACE) {
+                    startX = x;
+                    startY = y;
+                    foundOrigin = true;
+                } else if(indices[y][x] == DESTINATION_SPACE) {
+                    foundExit = true;
+                }
+            }
+        }
+
+        if(!foundExit || !foundOrigin) {
+            throw new RuntimeException("Map cannot be solved (no entrance/exit)");
+        }
+
+        System.out.println("Found origin at " + startX + ", " + startY);
+        return null;
+    }
+
+    private void checkMapIntegrity(String[] lines) {
         if(lines.length != HEIGHT) {
             throw new RuntimeException("Invalid map data (height == " + lines.length + ")");
         }
         for(int y = 0;  y < HEIGHT; y++) {
             String line = lines[y];
-
+            if(lines.length != HEIGHT) {
+                throw new RuntimeException("Invalid map data (height == " + lines.length + ")");
+            }
         }
-        return null;
     }
 }
