@@ -1,8 +1,12 @@
 package com.github.zachcloud;
 
 import java.util.HashSet;
-import java.util.Objects;
 
+/**
+ * Represents a deep dungeon map which can be loaded from
+ * a String representation of the map, and solved to
+ * discover a speedwalk to the end.
+ */
 public class DeepDungeonMap {
 
     private DeepDungeonMapNode origin;
@@ -15,29 +19,8 @@ public class DeepDungeonMap {
     private static final int HEIGHT = 21;
     private static final int WIDTH = 21;
 
-    private static class XYPair {
-        int x;
-        int y;
-
-        public XYPair(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            XYPair xyPair = (XYPair) o;
-            return x == xyPair.x &&
-                    y == xyPair.y;
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(x, y);
-        }
-    }
+    private boolean solved;
+    private Speedwalk solution;
 
     /**
      * Creates a Deep Dungeon Map object from the
@@ -48,43 +31,80 @@ public class DeepDungeonMap {
      */
     public DeepDungeonMap(String representation) {
         this.origin = deserialize(representation);
+        this.solution = new Speedwalk();
+        this.solved = false;
     }
 
+    /**
+     * Gets the origin node.
+     *
+     * @return Origin node
+     */
     public DeepDungeonMapNode getOrigin() {
         return origin;
     }
 
+    /**
+     * Recursive search for the next direction to move
+     * towards to finish the floor.
+     *
+     * @param sw   Speedwalk
+     * @param node This node
+     * @return True if search succeeds; false if not.
+     */
     public boolean findNextDirection(Speedwalk sw, DeepDungeonMapNode node) {
-        if(node.isExit()) {
+        // If we found an exit, return true.
+        // Returning true will stop the search immediately and
+        // recurse the result up the chain.
+        if (node.isExit()) {
             System.out.println("Found an exit - returning");
             return true;
         }
         // Attempt to walk all valid directions
-        for(String dir : new HashSet<>(node.getValidDirections())) {
+        for (String dir : new HashSet<>(node.getValidDirections())) {
+            // Add the direction to the speedwalk optimistically
+            // We don't know if it's right yet, but we'll remove
+            // it later if it's not right.
             sw.addDirection(dir);
             System.out.println("Proceeding " + dir + " from " + node.toString());
             // Before we traverse forward, remove these exits so we don't take them again
             DeepDungeonMapNode nextNode = node.traverse(dir);
             node.unlinkDirection(dir);
-            nextNode.unlinkDirection(DirectionUtils.reverseDirecrtion(dir));
-            if(findNextDirection(sw, nextNode)) {
+            nextNode.unlinkDirection(DirectionUtils.reverseDirection(dir));
+            // Recursively search the next room. This only returns
+            // true if we found an exit.
+            if (findNextDirection(sw, nextNode)) {
                 // We found an exit
                 System.out.println("Found an exit");
-               return true;
+                return true;
             } // Else, we simply continue traversing. No action to take.
         }
         // Walked all paths and didn't find an answer.
+        // That means this room is a dead end.
+        // We remove the last entry in the speedwalk because this isn't the direction to go
+        // and return false to continue the search
         System.out.println("Found a dead end - backtracking");
         sw.removeLast(1);
         return false;
     }
 
+    /**
+     * Solves the map.
+     * At the end of solving, the only remaining path
+     * through this map will lead to the stairs down.
+     * <p>
+     * Also returns a speedwalk to the stairs.
+     *
+     * @return Speedwalk to stairs down
+     */
     public Speedwalk solve() {
-        Speedwalk sw = new Speedwalk();
-        findNextDirection(sw, origin);
-        // Finally, add the down direction to proceed to next floor.
-        sw.addDirection("d");
-        return sw;
+        // If we already solved it, no need to repeat.
+        if (!solved) {
+            findNextDirection(solution, origin);
+            // Finally, add the down direction to proceed to next floor.
+            solution.addDirection("d");
+        }
+        return solution;
     }
 
 
@@ -134,6 +154,14 @@ public class DeepDungeonMap {
         return origin;
     }
 
+    /**
+     * Explores all directions from this one
+     *
+     * @param thisNode Node to explore from
+     * @param indices  Current map indices
+     * @param x        X location of node
+     * @param y        Y location of node
+     */
     private void explore(DeepDungeonMapNode thisNode, char[][] indices, int x, int y) {
         // Starting at this node, we will explore all directions
         // We'd rather not go back to this node.
@@ -141,14 +169,27 @@ public class DeepDungeonMap {
         indices[y][x] = '*';
 
         // Let's explore each of the four directions.
-        exploreDirection(thisNode, indices, x, y, 0, 1, "s", "n"); // South
-        exploreDirection(thisNode, indices, x, y, 0, -1, "n", "s"); // North
-        exploreDirection(thisNode, indices, x, y, 1, 0, "e", "w"); // East
-        exploreDirection(thisNode, indices, x, y, -1, 0, "w", "e"); // West
+        exploreDirection(thisNode, indices, x, y, 0, 1, "s"); // South
+        exploreDirection(thisNode, indices, x, y, 0, -1, "n"); // North
+        exploreDirection(thisNode, indices, x, y, 1, 0, "e"); // East
+        exploreDirection(thisNode, indices, x, y, -1, 0, "w"); // West
     }
 
+    /**
+     * Generic explore direction method
+     * Can explore s/w/n/e (implemented)
+     * and also nw/ne/sw/se (not used)
+     *
+     * @param thisNode      Node to explore from
+     * @param indices       Current map indices
+     * @param x             X location of node
+     * @param y             Y location of node
+     * @param xDiff         Amount to move in the x dir (1 or -1)
+     * @param yDiff         Amount to move in the y dir (1 or -1)
+     * @param thisDirection The letter representation of this direction
+     */
     private void exploreDirection(DeepDungeonMapNode thisNode, char[][] indices, int x, int y,
-                                  int xDiff, int yDiff, String thisDirection, String oppositeDirection) {
+                                  int xDiff, int yDiff, String thisDirection) {
         try {
             // In order for this to be valid, the two spaces below this one (y + 1) and (y+ 2) must be empty
             char emptySpace1 = indices[y + yDiff][x + xDiff];
@@ -161,11 +202,11 @@ public class DeepDungeonMap {
                     DeepDungeonMapNode newNode = new DeepDungeonMapNode(x + (xDiff * 3), y + (yDiff * 3));
                     // Add exits to the maps that need it
                     thisNode.addNode(thisDirection, newNode);
-                    newNode.addNode(oppositeDirection, thisNode);
+                    newNode.addNode(DirectionUtils.reverseDirection(thisDirection), thisNode);
                     // Mark this as origin or exit as needed
-                    if(roomSpace == ORIGIN_SPACE) {
+                    if (roomSpace == ORIGIN_SPACE) {
                         newNode.markAsOrigin();
-                    } else if(roomSpace == DESTINATION_SPACE) {
+                    } else if (roomSpace == DESTINATION_SPACE) {
                         newNode.markAsExit();
                     }
                     // Explore routes from this one
@@ -174,6 +215,7 @@ public class DeepDungeonMap {
             }
         } catch (Exception ex) {
             // We went out of bounds, so it's not traversable.
+            // This isn't a bad thing.
         }
     }
 

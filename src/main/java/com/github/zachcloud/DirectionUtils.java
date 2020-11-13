@@ -1,7 +1,15 @@
 package com.github.zachcloud;
 
+/**
+ * Utility class for game directions
+ */
 public class DirectionUtils {
 
+    /**
+     * Verifies that this is a legitimate direction.
+     *
+     * @param originalDirection Direction to check
+     */
     public static void verifyDirection(String originalDirection) {
         originalDirection = originalDirection.toLowerCase();
         if (!originalDirection.equalsIgnoreCase("n") && !originalDirection.equalsIgnoreCase("w") &&
@@ -11,15 +19,21 @@ public class DirectionUtils {
         }
     }
 
-    public static String reverseDirecrtion(String originalDirection) {
+    /**
+     * Gets the opposite of this direction.
+     *
+     * @param originalDirection Direction to reverse
+     * @return Opposite direction
+     */
+    public static String reverseDirection(String originalDirection) {
         originalDirection = originalDirection.toLowerCase();
-        if(originalDirection.equals("s")) {
+        if (originalDirection.equals("s")) {
             return "n";
-        } else if(originalDirection.equals("n")) {
+        } else if (originalDirection.equals("n")) {
             return "s";
-        } else if(originalDirection.equals("w")) {
+        } else if (originalDirection.equals("w")) {
             return "e";
-        } else if(originalDirection.equals("e")) {
+        } else if (originalDirection.equals("e")) {
             return "w";
         }
         throw new RuntimeException("Invalid direction (irreversible): " + originalDirection);

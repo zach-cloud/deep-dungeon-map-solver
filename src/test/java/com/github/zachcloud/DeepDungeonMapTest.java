@@ -61,6 +61,9 @@ public class DeepDungeonMapTest extends TestCase {
         DeepDungeonMap map = new DeepDungeonMap(sampleMap);
         Speedwalk sw = map.solve();
         Assert.assertEquals("Speedwalk did not match", "s;w;s;w;n;w;n;w;s;w;s;e;s;s;s;w;s;e;e;e;e;d", sw.toString());
+        Speedwalk sw2 = map.solve();
+        Assert.assertEquals("Speedwalk did not match", sw.toString(), sw2.toString());
+
     }
 
 }
