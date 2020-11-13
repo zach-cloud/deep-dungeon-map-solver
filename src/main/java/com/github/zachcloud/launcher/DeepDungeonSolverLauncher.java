@@ -1,6 +1,7 @@
 package com.github.zachcloud.launcher;
 
 import com.github.zachcloud.cli.DeepDungeonSolverCLI;
+import com.github.zachcloud.gui.DeepDungeonSolverGUI;
 
 /**
  * Runs the DD Solver program.
@@ -32,6 +33,6 @@ public class DeepDungeonSolverLauncher {
     }
 
     private static void launchGui() {
-
+        DeepDungeonSolverGUI.main(new String[0]);
     }
 }
