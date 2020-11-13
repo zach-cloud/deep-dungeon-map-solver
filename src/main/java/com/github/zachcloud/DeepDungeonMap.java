@@ -13,6 +13,7 @@ public class DeepDungeonMap {
 
     private static final char ORIGIN_SPACE = 'U';
     private static final char DESTINATION_SPACE = 'D';
+    private static final char PLAYER_SPACE = '@';
     private static final char EMPTY_SPACE = ' ';
     private static final char WALL_SPACE = '*';
 
@@ -166,7 +167,7 @@ public class DeepDungeonMap {
         // Starting at this node, we will explore all directions
         // We'd rather not go back to this node.
         // So we block it off on the indices
-        indices[y][x] = '*';
+        indices[y][x] = WALL_SPACE;
 
         // Let's explore each of the four directions.
         exploreDirection(thisNode, indices, x, y, 0, 1, "s"); // South
@@ -197,7 +198,8 @@ public class DeepDungeonMap {
             if (emptySpace1 == EMPTY_SPACE && emptySpace2 == EMPTY_SPACE) {
                 // The origin space can be any valid space delimiter
                 char roomSpace = indices[y + (yDiff * 3)][x + (xDiff * 3)];
-                if (roomSpace == EMPTY_SPACE || roomSpace == DESTINATION_SPACE || roomSpace == ORIGIN_SPACE) {
+                if (roomSpace == EMPTY_SPACE || roomSpace == PLAYER_SPACE ||
+                        roomSpace == DESTINATION_SPACE || roomSpace == ORIGIN_SPACE) {
                     // This is a valid map square.
                     DeepDungeonMapNode newNode = new DeepDungeonMapNode(x + (xDiff * 3), y + (yDiff * 3));
                     // Add exits to the maps that need it
