@@ -21,8 +21,17 @@ continue solving maps (entering another) or exit.
 
 # GUI Capability
 
-Not yet available.
+To access the GUI, run the application with the "gui" argument. This
+will open up a JavaFX application which allows you to enter a map,
+press generate, and get a speedwalk. There is also an example map.
+
 
 # Download
 
-Not yet available.
+Download here: https://github.com/zach-cloud/deep-dungeon-map-solver/blob/master/artifacts/deep-dungeon-solver-1.0.zip
+
+- Go to link
+- Press the download button on the right-hand side of the screen
+- Unzip the file with 7Zip or some equivalent
+- Double click the "run" file to automatically run the GUI
+    - You can also run it as a JAR file from the command line
