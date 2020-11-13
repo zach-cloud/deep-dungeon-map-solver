@@ -25,7 +25,7 @@ To access the GUI, run the application with the "gui" argument. This
 will open up a JavaFX application which allows you to enter a map,
 press generate, and get a speedwalk. There is also an example map.
 
-# Maven Cooridnates
+# Maven Coordinates
 
 Not yet available.
 
