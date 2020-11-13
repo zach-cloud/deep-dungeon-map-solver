@@ -1,4 +1,4 @@
-package com.github.zachcloud;
+package com.github.zachcloud.deepdungeon;
 
 /**
  * Utility class for game directions

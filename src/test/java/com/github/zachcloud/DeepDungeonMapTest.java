@@ -1,5 +1,7 @@
 package com.github.zachcloud;
 
+import com.github.zachcloud.deepdungeon.DeepDungeonMap;
+import com.github.zachcloud.deepdungeon.Speedwalk;
 import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Test;

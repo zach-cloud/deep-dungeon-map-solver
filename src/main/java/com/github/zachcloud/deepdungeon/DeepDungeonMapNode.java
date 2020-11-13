@@ -1,10 +1,10 @@
-package com.github.zachcloud;
+package com.github.zachcloud.deepdungeon;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import static com.github.zachcloud.DirectionUtils.verifyDirection;
+import static com.github.zachcloud.deepdungeon.DirectionUtils.verifyDirection;
 
 /**
  * Represents a single room in the Deep Dungeon

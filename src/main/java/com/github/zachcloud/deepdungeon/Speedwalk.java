@@ -1,4 +1,4 @@
-package com.github.zachcloud;
+package com.github.zachcloud.deepdungeon;
 
 import java.util.ArrayList;
 import java.util.List;
