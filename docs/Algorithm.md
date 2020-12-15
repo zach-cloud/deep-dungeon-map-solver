@@ -55,7 +55,7 @@ to the other nodes in the dungeon floor. You can now proceed to solve the map.
 
 The Solving step will remove all nodes except the ones that lead to the end of the dungeon.
 It will also produce a speedwalk to the end of the floor.
-You can assume for simplicity's sake that a Speedwalk is a Stack of directions.
+You can assume for simplicity's sake that a Speedwalk is an in-order list of directions.
 
 This step assumes you already have a build map, with a known origin and exit room.
 
