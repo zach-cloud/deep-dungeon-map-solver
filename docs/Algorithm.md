@@ -38,7 +38,7 @@ explore(node,indices,x,y) =
 - Set the current INDICIES value to '*'
 - For each direction (N/S/E/W):
     - Verify that one space in the desired direction is an empty (space1 = ' '), else continue with next direction
-    - Verify that one space in the desired direction is an empty (space1 = ' '), else continue with next direction
+    - Verify that another space in the desired direction is an empty (space2 = ' '), else continue with next direction
     - Select the third space in the desired direction
     - Verify selected space is either ' ', '@', 'U', or 'D'
     - Create a new node, with the location being the selected space
